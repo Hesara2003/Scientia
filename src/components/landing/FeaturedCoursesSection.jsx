@@ -37,9 +37,9 @@ export default function FeaturedCoursesSection({ loading, classes, containerVari
             {classes.slice(0, 6).map((course) => (
               <motion.div 
                 key={course.id}
-                className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 border border-gray-100 group"
+                className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 border border-gray-100 group"
                 variants={itemVariants}
-                whileHover={{ y: -8 }}
+                whileHover={{ y: -5 }}
               >
                 <div className="bg-gradient-to-r from-blue-600 to-indigo-600 h-3 w-full group-hover:h-4 transition-all"></div>
                 <div className="p-8">
@@ -101,49 +101,31 @@ export default function FeaturedCoursesSection({ loading, classes, containerVari
                   
                     <motion.button
                       whileHover={{ 
-                        scale: 1.03,
-                        boxShadow: "0 10px 15px -3px rgba(79, 70, 229, 0.2), 0 4px 6px -2px rgba(79, 70, 229, 0.1)"
+                        scale: 1.02,
+                        boxShadow: "0 4px 6px -1px rgba(79, 70, 229, 0.1)"
                       }}
                       whileTap={{ scale: 0.98 }}
                       onClick={() => navigate('/auth/register')}
-                      className="relative w-full mt-2 px-6 py-3 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white font-medium rounded-lg shadow-md transition-all duration-300 overflow-hidden group"
+                      className="relative w-full mt-2 px-6 py-3 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white font-medium rounded-lg shadow-md transition-all duration-300 overflow-hidden"
                     >
-                      {/* Background animation */}
-                      <div className="absolute top-0 right-full w-full h-full bg-gradient-to-r from-blue-600 to-indigo-600 transform group-hover:translate-x-full transition-all duration-500 ease-in-out z-0"></div>
-                      
                       {/* Button content */}
-                      <div className="relative flex items-center justify-center z-10">
+                      <div className="relative flex items-center justify-center">
                         <span className="mr-1">Enroll Now</span>
-                        <motion.svg 
+                        <svg 
                           className="h-5 w-5" 
                           xmlns="http://www.w3.org/2000/svg" 
                           fill="none" 
                           viewBox="0 0 24 24" 
                           stroke="currentColor"
-                          initial={{ x: 0 }}
-                          animate={{ x: [0, 5, 0] }}
-                          transition={{ 
-                            repeat: Infinity, 
-                            repeatType: "loop", 
-                            duration: 1.5,
-                            repeatDelay: 2
-                          }}
                         >
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                        </motion.svg>
+                        </svg>
                       </div>
-                      
-                      {/* Highlight effect */}
-                      <motion.span 
-                        className="absolute top-0 left-0 w-full h-full bg-white opacity-0"
-                        whileHover={{ opacity: [0, 0.1, 0] }}
-                        transition={{ duration: 1, repeat: Infinity }}
-                      />
                     </motion.button>
                     
                     {/* Limited spots indicator */}
                     {course.studentCount / course.maxCapacity > 0.7 && (
-                      <div className="mt-2 text-center text-xs text-red-500 font-medium animate-pulse">
+                      <div className="mt-2 text-center text-xs text-red-500 font-medium">
                         Only {course.maxCapacity - course.studentCount} spots left!
                       </div>
                     )}
@@ -156,10 +138,10 @@ export default function FeaturedCoursesSection({ loading, classes, containerVari
         
         <motion.div 
           className="mt-12 text-center"
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ delay: 0.6 }}
+          transition={{ delay: 0.3 }}
         >
           <Link 
             to="/explore/subjects" 
