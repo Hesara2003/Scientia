@@ -153,57 +153,114 @@ export default function SubjectDetailPage() {
   return (
     <div className="bg-gray-50 min-h-screen">
       {/* Header Section */}
-      <div className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white">
+      <motion.div 
+        className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.6 }}
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="flex items-center">
-            <img src={subject.icon} alt={subject.name} className="w-16 h-16 mr-6 bg-white p-2 rounded-lg shadow-lg" />
+          <motion.div 
+            className="flex items-center"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2, duration: 0.5 }}
+          >
+            <motion.img 
+              src={subject.icon} 
+              alt={subject.name} 
+              className="w-16 h-16 mr-6 bg-white p-2 rounded-lg shadow-lg" 
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.3, duration: 0.5 }}
+              whileHover={{ scale: 1.1, transition: { duration: 0.2 } }}
+            />
             <div>
-              <h1 className="text-3xl font-bold">{subject.name}</h1>
-              <p className="mt-2 text-indigo-100 text-lg">{subject.description}</p>
+              <motion.h1 
+                className="text-3xl font-bold"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.4, duration: 0.5 }}
+              >
+                {subject.name}
+              </motion.h1>
+              <motion.p 
+                className="mt-2 text-indigo-100 text-lg"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.5, duration: 0.5 }}
+              >
+                {subject.description}
+              </motion.p>
             </div>
-          </div>
+          </motion.div>
           
-          <div className="mt-6 flex flex-wrap gap-3">
+          <motion.div 
+            className="mt-6 flex flex-wrap gap-3"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6, duration: 0.5 }}
+          >
             {subject.popularTopics && subject.popularTopics.map((topic, index) => (
-              <span key={index} className="bg-indigo-800 bg-opacity-50 px-3 py-1 rounded-full text-white text-sm">
+              <motion.span 
+                key={index} 
+                className="bg-indigo-800 bg-opacity-50 px-3 py-1 rounded-full text-white text-sm"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.7 + (index * 0.1), duration: 0.5 }}
+                whileHover={{ scale: 1.1, transition: { duration: 0.2 } }}
+              >
                 {topic}
-              </span>
+              </motion.span>
             ))}
-          </div>
+          </motion.div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Navigation Tabs */}
-      <div className="bg-white shadow">
+      <motion.div 
+        className="bg-white shadow"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.8, duration: 0.5 }}
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex overflow-x-auto">
-            <button
+            <motion.button
               className={`py-4 px-6 focus:outline-none ${activeTab === 'overview' ? 'text-indigo-600 border-b-2 border-indigo-600 font-medium' : 'text-gray-500 hover:text-indigo-600'}`}
               onClick={() => setActiveTab('overview')}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
               Overview
-            </button>
-            <button
+            </motion.button>
+            <motion.button
               className={`py-4 px-6 focus:outline-none ${activeTab === 'classes' ? 'text-indigo-600 border-b-2 border-indigo-600 font-medium' : 'text-gray-500 hover:text-indigo-600'}`}
               onClick={() => setActiveTab('classes')}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
               Classes
-            </button>
-            <button
+            </motion.button>
+            <motion.button
               className={`py-4 px-6 focus:outline-none ${activeTab === 'tutors' ? 'text-indigo-600 border-b-2 border-indigo-600 font-medium' : 'text-gray-500 hover:text-indigo-600'}`}
               onClick={() => setActiveTab('tutors')}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
               Tutors
-            </button>
-            <button
+            </motion.button>
+            <motion.button
               className={`py-4 px-6 focus:outline-none ${activeTab === 'recordings' ? 'text-indigo-600 border-b-2 border-indigo-600 font-medium' : 'text-gray-500 hover:text-indigo-600'}`}
               onClick={() => setActiveTab('recordings')}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
               Recordings
-            </button>
+            </motion.button>
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Content Sections */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

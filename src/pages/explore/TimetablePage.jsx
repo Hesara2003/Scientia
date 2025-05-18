@@ -99,21 +99,35 @@ export default function TimetablePage() {
     { id: 4, name: "English Literature" },
     { id: 5, name: "Computer Science" }
   ];
-
   return (
     <div className="py-12 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
+        <motion.div 
+          className="text-center mb-12"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
           <h1 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
             Class Timetable
           </h1>
-          <p className="mt-4 text-xl text-gray-600 max-w-2xl mx-auto">
+          <motion.p 
+            className="mt-4 text-xl text-gray-600 max-w-2xl mx-auto"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2, duration: 0.5 }}
+          >
             Browse our schedule of upcoming classes and find the perfect fit for your learning journey.
-          </p>
-        </div>
+          </motion.p>
+        </motion.div>
 
         {/* Filters and View Toggle */}
-        <div className="mb-8">
+        <motion.div 
+          className="mb-8"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3, duration: 0.5 }}
+        >
           <div className="flex flex-col space-y-4 md:space-y-0 md:flex-row md:justify-between md:items-center">
             <div className="flex flex-wrap gap-2">
               <select
@@ -146,23 +160,27 @@ export default function TimetablePage() {
             </div>
             
             <div className="inline-flex rounded-md shadow-sm">
-              <button
+              <motion.button
                 type="button"
                 className={`px-4 py-2 text-sm font-medium rounded-l-md ${view === 'list' ? 'bg-indigo-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-50'}`}
                 onClick={() => setView('list')}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
                 List View
-              </button>
-              <button
+              </motion.button>
+              <motion.button
                 type="button"
                 className={`px-4 py-2 text-sm font-medium rounded-r-md ${view === 'calendar' ? 'bg-indigo-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-50'}`}
                 onClick={() => setView('calendar')}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
                 Calendar View
-              </button>
+              </motion.button>
             </div>
           </div>
-        </div>
+        </motion.div>
 
         {/* Content based on view */}
         {loading ? (
@@ -172,7 +190,12 @@ export default function TimetablePage() {
         ) : filteredClasses.length > 0 ? (
           view === 'list' ? (
             // List View
-            <div className="bg-white shadow-md rounded-lg overflow-hidden">
+            <motion.div
+              className="bg-white shadow-md rounded-lg overflow-hidden"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4, duration: 0.5 }}
+            >
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                   <tr>
@@ -222,7 +245,7 @@ export default function TimetablePage() {
                   ))}
                 </tbody>
               </table>
-            </div>
+            </motion.div>
           ) : (
             // Calendar View
             <motion.div 
@@ -286,7 +309,12 @@ export default function TimetablePage() {
         )}
 
         {/* Legend */}
-        <div className="mt-8 bg-white p-4 rounded-md shadow-sm">
+        <motion.div 
+          className="mt-8 bg-white p-4 rounded-md shadow-sm"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5, duration: 0.5 }}
+        >
           <h3 className="text-sm font-medium text-gray-700 mb-2">Enrollment Status</h3>
           <div className="flex items-center space-x-6">
             <div className="flex items-center">
@@ -302,23 +330,30 @@ export default function TimetablePage() {
               <span className="text-xs text-gray-600">Full</span>
             </div>
           </div>
-        </div>
+        </motion.div>
 
         {/* Request Custom Schedule */}
-        <div className="mt-10 bg-indigo-50 rounded-lg p-6">
+        <motion.div 
+          className="mt-10 bg-indigo-50 rounded-lg p-6"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6, duration: 0.5 }}
+        >
           <div className="flex flex-col md:flex-row items-center justify-between">
             <div>
               <h3 className="text-lg font-semibold text-gray-900">Can't find a suitable time?</h3>
               <p className="text-gray-600 mt-1">Request a class at a time that works for you.</p>
             </div>
-            <button
+            <motion.button
               onClick={() => window.location.href = '/auth/register'}
               className="mt-4 md:mt-0 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-md"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
               Request Custom Schedule
-            </button>
+            </motion.button>
           </div>
-        </div>
+        </motion.div>
       </div>
     </div>
   );

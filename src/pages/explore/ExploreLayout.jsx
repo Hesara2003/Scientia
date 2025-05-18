@@ -17,7 +17,7 @@ export default function ExploreLayout() {
                 whileHover={{ scale: 1.05 }}
               >
                 <Link to="/explore" className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                  EduLearn Hub
+                  Scientia
                 </Link>
               </motion.div>
               <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
@@ -90,7 +90,7 @@ export default function ExploreLayout() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div>
-              <h3 className="text-lg font-semibold mb-4">EduLearn Hub</h3>
+              <h3 className="text-lg font-semibold mb-4">Scientia</h3>
               <p className="text-gray-400 text-sm">
                 Empowering students to achieve academic excellence through innovative learning solutions.
               </p>
@@ -163,27 +163,40 @@ export default function ExploreLayout() {
           </div>
           <div className="mt-8 pt-8 border-t border-gray-700">
             <div className="flex flex-col md:flex-row justify-between items-center">
-              <p className="text-sm text-gray-400">© 2025 EduLearn Hub. All rights reserved.</p>
-              <div className="flex space-x-6 mt-4 md:mt-0">
+              <p className="text-sm text-gray-400">© 2025 Scientia. All rights reserved.</p>
+              <div className="flex flex-col md:flex-row space-y-3 md:space-y-0 md:space-x-8 mt-4 md:mt-0">
                 <motion.a 
                   href="#" 
-                  className="text-sm text-gray-400 hover:text-white transition-colors duration-300"
-                  whileHover={{ y: -2 }}
+                  className="text-sm flex items-center px-3 py-1.5 rounded-lg text-gray-300 hover:text-white hover:bg-gray-700/30 transition-all duration-300 group"
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.98 }}
                 >
+                  <svg className="w-4 h-4 mr-2 text-blue-400 group-hover:text-blue-300" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M18 8a6 6 0 01-7.743 5.743L10 14l-1 1-1 1H6v-1l1-1v-1H4a2 2 0 01-2-2V8a2 2 0 012-2h2v2H5v2h2v1l1-1 1-1 .293.293a6.001 6.001 0 018.284-8.284A6 6 0 0118 8z" clipRule="evenodd" />
+                  </svg>
                   Privacy Policy
                 </motion.a>
                 <motion.a 
                   href="#" 
-                  className="text-sm text-gray-400 hover:text-white transition-colors duration-300"
-                  whileHover={{ y: -2 }}
+                  className="text-sm flex items-center px-3 py-1.5 rounded-lg text-gray-300 hover:text-white hover:bg-gray-700/30 transition-all duration-300 group"
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.98 }}
                 >
+                  <svg className="w-4 h-4 mr-2 text-blue-400 group-hover:text-blue-300" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clipRule="evenodd" />
+                  </svg>
                   Terms of Service
                 </motion.a>
                 <motion.a 
                   href="#" 
-                  className="text-sm text-gray-400 hover:text-white transition-colors duration-300"
-                  whileHover={{ y: -2 }}
+                  className="text-sm flex items-center px-3 py-1.5 rounded-lg text-gray-300 hover:text-white hover:bg-gray-700/30 transition-all duration-300 group"
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.98 }}
                 >
+                  <svg className="w-4 h-4 mr-2 text-blue-400 group-hover:text-blue-300" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                    <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+                  </svg>
                   Contact Us
                 </motion.a>
               </div>
