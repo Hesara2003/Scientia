@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-// Import icons from our wrapper component
-import { ArrowRight, BookOpen, Users, Award } from '../common/LucideIcons';
+// Import icons individually to avoid bundling issues
+import { ArrowRight } from 'lucide-react';
+import { BookOpen } from 'lucide-react';
+import { Users } from 'lucide-react';
+import { Award } from 'lucide-react';
 
 // Enhanced typing text with better animation
 const TypingText = ({ text, cursorVisible = true }) => (

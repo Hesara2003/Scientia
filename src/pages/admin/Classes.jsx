@@ -55,6 +55,30 @@ export default function Classes() {
     "5:00 PM",
   ];
 
+  // Helper function to get tutor display name
+  const getTutorDisplayName = (tutor) => {
+    if (!tutor) return "Unknown";
+
+    if (typeof tutor === "string") return tutor;
+
+    if (typeof tutor === "object") {
+      if (tutor.firstName && tutor.lastName) {
+        return `${tutor.firstName} ${tutor.lastName}`;
+      } else if (tutor.firstName) {
+        return tutor.firstName;
+      } else if (tutor.lastName) {
+        return tutor.lastName;
+      } else if (tutor.email) {
+        return tutor.email;
+      } else if (tutor.tutorName) {
+        return tutor.tutorName;
+      } else if (tutor.name) {
+        return tutor.name;
+      }
+    }
+
+    return "Unknown";
+  };
   useEffect(() => {
     const fetchClasses = async () => {
       setLoading(true);
@@ -64,10 +88,10 @@ export default function Classes() {
         // Sanitize data
         const classesWithStatus = response.data.map((cls) => ({
           ...cls,
-          id: cls.id || Date.now() + Math.random(), // Ensure unique ID
-          name: cls.name || "Unnamed Class",
-          subject: cls.subject || "Unknown",
-          tutor: cls.tutor || "Unknown",
+          id: cls.classId || cls.id || Date.now() + Math.random(), // Ensure unique ID
+          name: cls.className || cls.name || "Unnamed Class",
+          subject: cls.subject || cls.description || "Unknown",
+          // Keep tutor as is (can be object or string)
           room: cls.room || "N/A",
           startTime: cls.startTime || "N/A",
           endTime: cls.endTime || "N/A",
@@ -75,6 +99,7 @@ export default function Classes() {
           capacity: Number(cls.capacity) || 0,
           enrolledStudents: Number(cls.enrolledStudents) || 0,
           status: cls.status ? String(cls.status) : "active", // Ensure string
+          price: cls.price || 0
         }));
         setClasses(classesWithStatus);
       } catch (err) {
@@ -120,19 +145,20 @@ export default function Classes() {
 
     fetchClasses();
   }, []);
-
   const filteredClasses = classes.filter((cls) => {
     const status = cls.status || "active";
     if (activeTab !== "all" && status !== activeTab) {
       return false;
     }
-    if (
-      searchQuery &&
-      !cls.name?.toLowerCase().includes(searchQuery.toLowerCase()) &&
-      !cls.tutor?.toLowerCase().includes(searchQuery.toLowerCase()) &&
-      !cls.room?.toLowerCase().includes(searchQuery.toLowerCase())
-    ) {
-      return false;
+    if (searchQuery) {
+      const tutorName = getTutorDisplayName(cls.tutor).toLowerCase();
+      if (
+        !cls.name?.toLowerCase().includes(searchQuery.toLowerCase()) &&
+        !tutorName.includes(searchQuery.toLowerCase()) &&
+        !cls.room?.toLowerCase().includes(searchQuery.toLowerCase())
+      ) {
+        return false;
+      }
     }
     if (filterSubject !== "all" && cls.subject !== filterSubject) {
       return false;
@@ -158,20 +184,29 @@ export default function Classes() {
       return { ...prev, days: updatedDays };
     });
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:8080/classes", {
+      const classData = {
         ...newClass,
+        className: newClass.name,
+        description: newClass.subject,
         capacity: Number(newClass.capacity),
         enrolledStudents: Number(newClass.enrolledStudents),
         status: "active",
-      });
-      setClasses((prev) => [
-        ...prev,
-        { ...response.data, id: response.data.id || Date.now() },
-      ]);
+      };
+      
+      const response = await axios.post("http://localhost:8080/classes", classData);
+      
+      // Format the response data to match our component's expected structure
+      const formattedClass = {
+        ...response.data,
+        id: response.data.classId || response.data.id || Date.now(),
+        name: response.data.className || response.data.name,
+        subject: response.data.description || response.data.subject,
+      };
+      
+      setClasses((prev) => [...prev, formattedClass]);
       setShowAddModal(false);
       setNewClass({
         name: "",
@@ -225,7 +260,9 @@ export default function Classes() {
     <div className="max-w-7xl mx-auto px-4 py-6">
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-800">Class Management</h1>
-        <p className="text-gray-600">Manage and schedule classes for your institution.</p>
+        <p className="text-gray-600">
+          Manage and schedule classes for your institution.
+        </p>
       </div>
 
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 space-y-4 md:space-y-0">
@@ -361,12 +398,20 @@ export default function Classes() {
             key={cls.id}
             className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300"
           >
-            <div className={`h-2 ${getCapacityColor(getCapacityPercentage(cls.enrolledStudents, cls.capacity))}`}></div>
+            <div
+              className={`h-2 ${getCapacityColor(
+                getCapacityPercentage(cls.enrolledStudents, cls.capacity)
+              )}`}
+            ></div>
             <div className="p-6">
               <div className="flex justify-between items-start">
-                <h3 className="text-lg font-bold text-gray-800 mb-1">{cls.name || "Unnamed Class"}</h3>
+                <h3 className="text-lg font-bold text-gray-800 mb-1">
+                  {cls.name || "Unnamed Class"}
+                </h3>
                 <span
-                  className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(cls.status || "active")}`}
+                  className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(
+                    cls.status || "active"
+                  )}`}
                 >
                   {typeof cls.status === "string" && cls.status
                     ? cls.status.charAt(0).toUpperCase() + cls.status.slice(1)
@@ -374,7 +419,9 @@ export default function Classes() {
                 </span>
               </div>
 
-              <p className="text-sm text-blue-600 mb-4">{cls.subject || "Unknown"}</p>
+              <p className="text-sm text-blue-600 mb-4">
+                {cls.subject || "Unknown"}
+              </p>
 
               <div className="space-y-2 mb-4">
                 <div className="flex items-center">
@@ -392,7 +439,9 @@ export default function Classes() {
                       d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
                     />
                   </svg>
-                  <span className="text-sm text-gray-700">{cls.tutor || "Unknown"}</span>
+                  <span className="text-sm text-gray-700">
+                    {getTutorDisplayName(cls.tutor)}
+                  </span>
                 </div>
                 <div className="flex items-center">
                   <svg
@@ -409,7 +458,9 @@ export default function Classes() {
                       d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
                     />
                   </svg>
-                  <span className="text-sm text-gray-700">Room {cls.room || "N/A"}</span>
+                  <span className="text-sm text-gray-700">
+                    Room {cls.room || "N/A"}
+                  </span>
                 </div>
                 <div className="flex items-center">
                   <svg
@@ -446,7 +497,9 @@ export default function Classes() {
                     />
                   </svg>
                   <span className="text-sm text-gray-700">
-                    {cls.days.length > 0 ? cls.days.join(", ") : "No days"}
+                    {cls.days.length > 0
+                      ? cls.days.join(", ")
+                      : "No days"}
                   </span>
                 </div>
               </div>
@@ -460,9 +513,14 @@ export default function Classes() {
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2">
                   <div
-                    className={`h-2 rounded-full ${getCapacityColor(getCapacityPercentage(cls.enrolledStudents, cls.capacity))}`}
+                    className={`h-2 rounded-full ${getCapacityColor(
+                      getCapacityPercentage(cls.enrolledStudents, cls.capacity)
+                    )}`}
                     style={{
-                      width: `${getCapacityPercentage(cls.enrolledStudents, cls.capacity)}%`,
+                      width: `${getCapacityPercentage(
+                        cls.enrolledStudents,
+                        cls.capacity
+                      )}%`,
                     }}
                   />
                 </div>
@@ -530,7 +588,9 @@ export default function Classes() {
                 d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
               />
             </svg>
-            <h3 className="text-lg font-medium text-gray-800 mb-1">No Classes Found</h3>
+            <h3 className="text-lg font-medium text-gray-800 mb-1">
+              No Classes Found
+            </h3>
             <p className="text-gray-600 mb-4">
               No classes matching your current filters were found.
             </p>
@@ -550,7 +610,9 @@ export default function Classes() {
 
       {/* Weekly Schedule View */}
       <div className="mb-10">
-        <h2 className="text-xl font-bold text-gray-800 mb-4">Weekly Schedule</h2>
+        <h2 className="text-xl font-bold text-gray-800 mb-4">
+          Weekly Schedule
+        </h2>
         <div className="bg-white rounded-lg shadow-md overflow-hidden">
           <div className="overflow-x-auto">
             <table className="min-w-full">
@@ -571,7 +633,10 @@ export default function Classes() {
               </thead>
               <tbody>
                 {timeSlots.map((time, index) => (
-                  <tr key={time} className={index % 2 === 0 ? "bg-gray-50" : "bg-white"}>
+                  <tr
+                    key={time}
+                    className={index % 2 === 0 ? "bg-gray-50" : "bg-white"}
+                  >
                     <td className="py-2 px-4 border-b border-gray-200 font-medium text-gray-500">
                       {time}
                     </td>
@@ -602,7 +667,7 @@ export default function Classes() {
                             >
                               <div className="font-medium">{cls.name || "Unnamed Class"}</div>
                               <div className="text-xs text-gray-600">
-                                {cls.room || "N/A"} - {cls.tutor || "Unknown"}
+                                {cls.room || "N/A"} - {getTutorDisplayName(cls.tutor)}
                               </div>
                               <div className="text-xs text-gray-500">
                                 {cls.startTime || "N/A"} - {cls.endTime || "N/A"}
@@ -827,7 +892,9 @@ export default function Classes() {
       )}
 
       <div className="text-center text-sm text-gray-500 mt-8">
-        <p>Showing {filteredClasses.length} of {classes.length} classes</p>
+        <p>
+          Showing {filteredClasses.length} of {classes.length} classes
+        </p>
       </div>
     </div>
   );

@@ -99,9 +99,10 @@ export default function Classes() {
   // Filter classes based on active tab and search term
   const filteredClasses = classes.filter(cls => {
     const matchesTab = activeTab === 'all' || cls.status === activeTab;
-    const matchesSearch = cls.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                          cls.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          cls.grade.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = 
+      (cls.name?.toLowerCase() || '').includes(searchTerm.toLowerCase()) || 
+      (cls.subject?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+      (cls.grade?.toLowerCase() || '').includes(searchTerm.toLowerCase());
     return matchesTab && matchesSearch;
   });
 
@@ -233,7 +234,7 @@ export default function Classes() {
                           cls.status === 'upcoming' ? 'bg-blue-100 text-blue-800' :
                           'bg-gray-100 text-gray-800'
                         }`}>
-                          {cls.status.charAt(0).toUpperCase() + cls.status.slice(1)}
+                          {(cls.status ? cls.status.charAt(0).toUpperCase() + cls.status.slice(1) : 'Unknown')}
                         </span>
                       </div>
                       <p className="text-sm text-gray-500 mb-1">{cls.subject} | {cls.grade}</p>
