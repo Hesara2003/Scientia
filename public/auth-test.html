@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auth API Test</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            color: #333;
+        }
+        h1 { color: #2c3e50; }
+        .card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        input, button {
+            padding: 8px 12px;
+            margin: 8px 0;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        button:hover { background-color: #3e8e41; }
+        pre {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 4px;
+            overflow: auto;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        .success { color: #4CAF50; }
+        .error { color: #f44336; }
+    </style>
+</head>
+<body>
+    <h1>Authentication API Test Tool</h1>
+    
+    <div class="card">
+        <h2>1. API Configuration</h2>
+        <div>
+            <label for="api-url">API Base URL:</label>
+            <input type="text" id="api-url" value="/api" style="width: 300px;"/>
+        </div>
+    </div>
+    
+    <div class="card">
+        <h2>2. Login Test</h2>
+        <div>
+            <label for="username">Username:</label>
+            <input type="text" id="username" placeholder="username or email" />
+        </div>
+        <div>
+            <label for="password">Password:</label>
+            <input type="password" id="password" placeholder="password" />
+        </div>
+        <div>
+            <button id="login-btn">Test Login</button>
+            <button id="direct-login-btn">Test Direct Login</button>
+        </div>
+        <div>
+            <h3>Login Response:</h3>
+            <pre id="login-result">No data</pre>
+        </div>
+    </div>
+    
+    <div class="card">
+        <h2>3. Authenticated Request Test</h2>
+        <div>
+            <label for="endpoint">API Endpoint:</label>
+            <input type="text" id="endpoint" value="/tutors" style="width: 300px;"/>
+        </div>
+        <div>
+            <button id="test-auth-req">Test Authenticated Request</button>
+        </div>
+        <div>
+            <h3>Request Response:</h3>
+            <pre id="request-result">No data</pre>
+        </div>
+    </div>
+    
+    <div class="card">
+        <h2>4. Current Token</h2>
+        <div>
+            <button id="show-token">Show Current Token</button>
+            <button id="clear-token">Clear Token</button>
+        </div>
+        <div>
+            <h3>Token Data:</h3>
+            <pre id="token-data">No token</pre>
+        </div>
+    </div>
+
+    <script>
+        // Helper function to display results
+        function displayResult(elementId, data, isError = false) {
+            const element = document.getElementById(elementId);
+            if (isError) {
+                element.innerHTML = `<span class="error">ERROR: ${JSON.stringify(data, null, 2)}</span>`;
+            } else {
+                element.innerHTML = `<span class="success">${JSON.stringify(data, null, 2)}</span>`;
+            }
+        }
+
+        // Test login
+        document.getElementById('login-btn').addEventListener('click', async () => {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const apiUrl = document.getElementById('api-url').value;
+            
+            if (!username || !password) {
+                displayResult('login-result', 'Username and password are required', true);
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${apiUrl}/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                const data = await response.json();
+                
+                displayResult('login-result', {
+                    status: response.status,
+                    statusText: response.statusText,
+                    headers: Object.fromEntries([...response.headers.entries()]),
+                    data: data
+                });
+                
+                // Store token if available
+                if (data.token) {
+                    localStorage.setItem('token', data.token);
+                    console.log('Token saved to localStorage');
+                }
+                
+            } catch (error) {
+                displayResult('login-result', error.message, true);
+            }
+        });
+        
+        // Test direct login (bypassing proxy)
+        document.getElementById('direct-login-btn').addEventListener('click', async () => {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            if (!username || !password) {
+                displayResult('login-result', 'Username and password are required', true);
+                return;
+            }
+            
+            try {
+                const response = await fetch(`http://51.21.202.228:8080/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                const data = await response.json();
+                
+                displayResult('login-result', {
+                    status: response.status,
+                    statusText: response.statusText,
+                    headers: Object.fromEntries([...response.headers.entries()]),
+                    data: data
+                });
+                
+            } catch (error) {
+                displayResult('login-result', error.message, true);
+            }
+        });
+
+        // Test authenticated request
+        document.getElementById('test-auth-req').addEventListener('click', async () => {
+            const token = localStorage.getItem('token');
+            const apiUrl = document.getElementById('api-url').value;
+            const endpoint = document.getElementById('endpoint').value;
+            
+            if (!token) {
+                displayResult('request-result', 'No token available. Please login first.', true);
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${apiUrl}${endpoint}`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                const data = await response.json();
+                
+                displayResult('request-result', {
+                    status: response.status,
+                    statusText: response.statusText,
+                    data: data
+                });
+                
+            } catch (error) {
+                displayResult('request-result', error.message, true);
+            }
+        });
+
+        // Show current token
+        document.getElementById('show-token').addEventListener('click', () => {
+            const token = localStorage.getItem('token');
+            
+            if (!token) {
+                document.getElementById('token-data').textContent = 'No token found in localStorage';
+                return;
+            }
+            
+            // Try to decode JWT token
+            try {
+                const parts = token.split('.');
+                if (parts.length === 3) {
+                    const header = JSON.parse(atob(parts[0]));
+                    
+                    // The payload might have padding issues, handle carefully
+                    let payload;
+                    try {
+                        payload = JSON.parse(atob(parts[1]));
+                    } catch (e) {
+                        let base64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+                        // Add padding if needed
+                        while (base64.length % 4 !== 0) {
+                            base64 += '=';
+                        }
+                        payload = JSON.parse(atob(base64));
+                    }
+                    
+                    displayResult('token-data', {
+                        header,
+                        payload,
+                        signature: parts[2].substring(0, 10) + '...',
+                        full: token
+                    });
+                } else {
+                    displayResult('token-data', {
+                        note: 'Not a valid JWT token format',
+                        full: token
+                    });
+                }
+            } catch (error) {
+                displayResult('token-data', {
+                    error: 'Could not parse token: ' + error.message,
+                    full: token
+                }, true);
+            }
+        });
+
+        // Clear token
+        document.getElementById('clear-token').addEventListener('click', () => {
+            localStorage.removeItem('token');
+            localStorage.removeItem('userRole');
+            document.getElementById('token-data').textContent = 'Token cleared from localStorage';
+        });
+    </script>
+</body>
+</html>

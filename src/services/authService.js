@@ -85,12 +85,23 @@ const initAuth = () => {
 const login = async (username, password) => {
   try {
     console.log('Logging in user:', username);
-    const response = await api.post('/auth/login', { username, password });
-    console.log('Login response received:', response.data);    // Extract token and role from the response
-    const token = response.data.token;
-    const role = response.data.role;
+    console.log('API base URL being used:', api.defaults.baseURL);
     
+    // Make the login request
+    const response = await api.post('/auth/login', { username, password });
+    
+    // Log full response for debugging
+    console.log('Login response status:', response.status);
+    console.log('Login response headers:', response.headers);
+    console.log('Login response received:', response.data);
+    
+    // Extract token and role from the response
+    const token = response.data?.token;
+    const role = response.data?.role;
+    
+    // Enhanced error handling for token
     if (!token) {
+      console.error('Token missing from response data:', response.data);
       throw new Error('No token received from server');
     }
 
