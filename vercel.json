@@ -7,6 +7,10 @@
     {
       "source": "/api/auth/:path*",
       "destination": "http://51.21.202.228:8080/auth/:path*"
+    },
+    {
+      "source": "/auth/:path*",
+      "destination": "http://51.21.202.228:8080/auth/:path*"
     }
   ],
   "headers": [
