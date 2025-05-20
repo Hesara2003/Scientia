@@ -1,14 +1,27 @@
 import axios from 'axios';
-import apiProxyHandler from './apiProxyHandler';
-
-// Get the proxy interceptor function
-const { proxyRequestInterceptor } = apiProxyHandler;
 
 // Initialize with token if available
 const token = localStorage.getItem('token');
 
-// Define API base URL - use environment variable or fallback
-const apiBaseUrl = import.meta.env.VITE_API_URL || 'http://51.21.202.228:8080/';
+// Determine if we're in a production environment
+const isProd = import.meta.env.PROD;
+
+// Use the appropriate base URL based on environment
+let apiBaseUrl;
+
+if (isProd) {
+  // For production deployments 
+  if (window.location.protocol === 'https:') {
+    // When served over HTTPS, use relative URLs which will be proxied by our production proxy
+    apiBaseUrl = '/api/'; 
+  } else {
+    // Fallback to direct HTTP (should rarely happen in production)
+    apiBaseUrl = import.meta.env.VITE_API_URL || 'http://51.21.202.228:8080/';
+  }
+} else {
+  // For development, use the Vite dev server proxy
+  apiBaseUrl = '/api/';
+}
 
 const api = axios.create({
   baseURL: apiBaseUrl,
@@ -28,9 +41,6 @@ const api = axios.create({
 
 // Add request interceptor for debugging and token handling
 api.interceptors.request.use((config) => {
-    // First apply the proxy interceptor for mixed content handling
-    config = proxyRequestInterceptor(config);
-    
     const token = localStorage.getItem('token');
     if (token) {      // Ensure exact formatting of 'Bearer ' + token with a space
       config.headers.Authorization = `Bearer ${token}`;
