@@ -10,8 +10,11 @@ const isProd = import.meta.env.PROD;
 let apiBaseUrl;
 
 if (isProd) {
-  // For production deployments, always use the backend server URL with HTTPS
-  apiBaseUrl = 'https://51.21.202.228:8080/';
+  // For production deployments, use HTTP for the backend server
+  apiBaseUrl = 'http://51.21.202.228:8080/';
+  
+  // Add a warning about mixed content
+  console.warn('Using HTTP for backend API. For production, consider setting up HTTPS on the backend server.');
 } else {
   // For development, use the Vite dev server proxy
   apiBaseUrl = '/api/';
@@ -24,8 +27,11 @@ const api = axios.create({
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Allow-Credentials': 'true',
     ...(token ? { 'Authorization': `Bearer ${token}` } : {})
   },
+  // Enable credentials for CORS
+  withCredentials: true,
   // Useful for debugging
   validateStatus: (status) => {
     // Log but return true for all statuses so we can handle them in our catch blocks
@@ -39,23 +45,27 @@ const api = axios.create({
 // Add request interceptor for debugging and token handling
 api.interceptors.request.use((config) => {
     const token = localStorage.getItem('token');
-    if (token) {      // Ensure exact formatting of 'Bearer ' + token with a space
+    if (token) {
       config.headers.Authorization = `Bearer ${token}`;
-      
       console.log(`API Request to ${config.url} with token`);
-      
-      // Check token validity before sending
-      try {
-        const parts = token.split('.');
-        if (parts.length !== 3) {
-          console.warn('WARNING: Malformed JWT token structure in Authorization header');
-        }
-      } catch (e) {
-        console.error('Error checking token format:', e);
-      }
     } else {
       console.log(`API Request to ${config.url} without token`);
     }
+    
+    // Add timestamp to prevent caching
+    if (config.method === 'get') {
+      config.params = {
+        ...config.params,
+        _t: Date.now()
+      };
+    }
+    
+    // Ensure CORS headers are set for all requests
+    config.headers['Access-Control-Allow-Origin'] = '*';
+    config.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS';
+    config.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization';
+    config.headers['Access-Control-Allow-Credentials'] = 'true';
+    
     return config;
   },
   (error) => {
@@ -91,51 +101,25 @@ api.interceptors.response.use(
           }
         }      } else if (status === 403) {
         console.error(`Authorization error (403) from ${url}. User might not have required permissions.`);
+        console.error('Request headers:', error.config?.headers);
+        console.error('Response headers:', error.response?.headers);
         
-        // Try to recover from 403 by refreshing token and adding explicit admin role
+        // Try to recover from 403 by adding CORS headers
         if (error.config && !error.config.__isRetryRequest) {
-          const token = localStorage.getItem('token');
+          console.log('Attempting to recover from 403 by adding CORS headers');
           
-          if (token) {
-            console.log('Attempting to recover from 403 by setting explicit admin role in headers');
-            
-            // Set admin role in localStorage for all future requests
-            localStorage.setItem('userRole', 'admin');
-            
-            // Create a new request with enhanced admin role information
-            const newRequest = {...error.config};
-            newRequest.headers = {
-              ...newRequest.headers,
-              'Authorization': `Bearer ${token}`,
-              'X-User-Role': 'admin',
-              'Role': 'admin'
-            };
-            
-            // Add query parameter with role for backend servers that check query params
-            const hasParams = newRequest.url.includes('?');
-            newRequest.url = newRequest.url + (hasParams ? '&' : '?') + 'role=admin';
-            
-            // Add role to request data if it's a POST/PUT request
-            if ((newRequest.method === 'post' || newRequest.method === 'put') && newRequest.data) {
-              try {
-                const data = typeof newRequest.data === 'string' 
-                  ? JSON.parse(newRequest.data) 
-                  : newRequest.data;
-                
-                data.userRole = 'admin';
-                data.createdBy = localStorage.getItem('userId');
-                newRequest.data = typeof newRequest.data === 'string' 
-                  ? JSON.stringify(data)
-                  : data;
-              } catch(e) {
-                console.warn('Could not modify request data', e);
-              }
-            }
-            
-            newRequest.__isRetryRequest = true;
-            
-            return axios(newRequest);
-          }
+          const newRequest = {...error.config};
+          newRequest.headers = {
+            ...newRequest.headers,
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+            'Access-Control-Allow-Credentials': 'true'
+          };
+          
+          newRequest.__isRetryRequest = true;
+          
+          return axios(newRequest);
         }
       } else {
         console.error(`API Error from ${url}: Status ${status}`, error.response.data);
