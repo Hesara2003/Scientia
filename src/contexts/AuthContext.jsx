@@ -1,6 +1,8 @@
 import React, { createContext, useState, useEffect, useContext, useCallback } from 'react';
 import { login as loginService, logout as logoutService, initAuth, getCurrentUser } from '../services/authService';
 import { getUserRole, formatAuthError } from '../utils/authUtils';
+// Import login debugging utility in non-production environments
+import '../utils/loginDebug';
 
 // Create auth context
 const AuthContext = createContext();
@@ -69,9 +71,7 @@ export const AuthProvider = ({ children }) => {
     };
     
     initializeAuth();
-  }, []);
-
-  // Login function
+  }, []);  // Login function
   const login = async (username, password) => {
     try {
       setLoading(true);
@@ -81,7 +81,12 @@ export const AuthProvider = ({ children }) => {
       // Check if there was a recent student registration
       const lastRegisteredRole = localStorage.getItem('lastRegisteredRole');
       console.log('AuthContext: Last registered role before login:', lastRegisteredRole);
-        const userData = await loginService(username, password);
+      
+      // Add CORS debugging info
+      console.log('AuthContext: Current origin:', window.location.origin);
+      console.log('AuthContext: Protocol:', window.location.protocol);
+      
+      const userData = await loginService(username, password);
       
       // Set role if available
       if (userData) {

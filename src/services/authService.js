@@ -87,17 +87,38 @@ const login = async (username, password) => {
     console.log('Logging in user:', username);
     console.log('API base URL being used:', api.defaults.baseURL);
     
-    // Make the login request
-    const response = await api.post('/auth/login', { username, password });
+    // Make the login request with enhanced error handling
+    const response = await api.post('/auth/login', { username, password }, {
+      // Explicitly set headers for this critical request
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      // Don't throw error on non-200 response to allow custom handling
+      validateStatus: function (status) {
+        return true; // always return true to handle errors manually
+      }
+    });
     
     // Log full response for debugging
     console.log('Login response status:', response.status);
     console.log('Login response headers:', response.headers);
     console.log('Login response received:', response.data);
     
+    // Handle non-200 responses explicitly
+    if (response.status !== 200) {
+      console.error(`Login failed with status ${response.status}:`, response.data);
+      throw new Error(`Login failed: ${response.status} ${response.statusText}`);
+    }
+    
+    // Response format validation
+    if (!response.data || typeof response.data !== 'object') {
+      console.error('Invalid response format:', response.data);
+      throw new Error('Invalid response format from server');
+    }
+    
     // Extract token and role from the response
-    const token = response.data?.token;
-    const role = response.data?.role;
+    const token = response.data.token;
+    const role = response.data.role;
     
     // Enhanced error handling for token
     if (!token) {
