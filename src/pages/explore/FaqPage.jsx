@@ -134,12 +134,7 @@ const FaqPage = () => {
         <h1 className="text-3xl font-bold text-gray-900 mb-8 text-center">Frequently Asked Questions</h1>
         
         {/* Search and Filter */}
-        <motion.div 
-          className="mb-8"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2, duration: 0.5 }}
-        >
+        <div className="mb-8">
           <div className="flex flex-col md:flex-row gap-4 mb-4">
             <div className="flex-1">
               <input
@@ -163,50 +158,41 @@ const FaqPage = () => {
               </select>
             </div>
           </div>
-        </motion.div>
+        </div>
         
         {/* FAQ List */}
-        <motion.div 
-          className="space-y-4"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.3, duration: 0.5 }}
-        >
+        <div className="space-y-4">
           {filteredFaqs.length > 0 ? (
-            filteredFaqs.map((faq, index) => (
+            filteredFaqs.map((faq) => (
               <motion.div
                 key={faq.id}
                 className="bg-white shadow-md rounded-lg overflow-hidden border border-gray-200"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 + (index * 0.1), duration: 0.5 }}
-                whileHover={{ 
-                  scale: 1.01, 
-                  boxShadow: "0px 3px 10px rgba(0,0,0,0.1)",
-                  transition: { duration: 0.2 }
-                }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.3 }}
               >
                 <button
                   className="w-full text-left p-4 focus:outline-none flex justify-between items-center"
                   onClick={() => toggleExpand(faq.id)}
                 >
                   <h2 className="text-lg font-medium text-gray-900">{faq.question}</h2>
-                  <motion.span 
-                    className="text-indigo-600"
-                    animate={{ rotate: expandedId === faq.id ? 180 : 0 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </motion.span>
+                  <span className="text-indigo-600">
+                    {expandedId === faq.id ? (
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 15l7-7 7 7" />
+                      </svg>
+                    ) : (
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                      </svg>
+                    )}
+                  </span>
                 </button>
                 
                 {expandedId === faq.id && (
                   <motion.div
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: "auto" }}
-                    exit={{ opacity: 0, height: 0 }}
                     transition={{ duration: 0.3 }}
                     className="p-4 bg-gray-50 border-t border-gray-200"
                   >
@@ -231,7 +217,7 @@ const FaqPage = () => {
               <p className="text-gray-500">No FAQs found. Please try a different search term or category.</p>
             </div>
           )}
-        </motion.div>
+        </div>
       </motion.div>
     </div>
   );

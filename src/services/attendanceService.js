@@ -90,46 +90,14 @@ export const createAttendance = async (attendance) => {
       }
     }
     
-    // Add role explicitly to request body
-    const userRole = localStorage.getItem('userRole') || 'tutor';
+    // Add creator ID to request
     const enhancedAttendance = {
       ...attendance,
-      userRole: userRole,
-      createdBy: localStorage.getItem('userId')
-    };
-    
-    // Add role to headers
-    const headers = {
-      'X-User-Role': userRole
+      createdBy: localStorage.getItem('userId') || undefined
     };
     
     console.log('Sending attendance data to server:', enhancedAttendance);
-    const response = await api.post(BASE_URL, enhancedAttendance, { headers });
-    
-    // Handle 403 error with a more specific retry
-    if (response.status === 403) {
-      console.warn('Access forbidden when creating attendance. Trying alternative approach...');
-      
-      // Try alternative endpoint based on role
-      const altUrl = userRole === 'tutor' ? `${BASE_URL}/tutor` : BASE_URL;
-      
-      const retryResponse = await api.post(altUrl, enhancedAttendance, { 
-        headers: {
-          'X-User-Role': userRole,
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      });
-      
-      if (retryResponse.status >= 400) {
-        throw new Error(`Failed to create attendance record: ${retryResponse.status}`);
-      }
-      
-      return retryResponse.data;
-    }
-    
-    if (response.status >= 400) {
-      throw new Error(`Failed to create attendance record: ${response.status}`);
-    }
+    const response = await api.post(BASE_URL, enhancedAttendance);
     
     return response.data;
   } catch (error) {

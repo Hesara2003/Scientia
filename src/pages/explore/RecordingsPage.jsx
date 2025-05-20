@@ -342,32 +342,17 @@ export default function RecordingsPage() {
   return (
     <div className="py-12 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div 
-          className="text-center mb-12"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
+        <div className="text-center mb-12">
           <h1 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
             Recording Bundles
           </h1>
-          <motion.p 
-            className="mt-4 text-xl text-gray-600 max-w-2xl mx-auto"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.5 }}
-          >
+          <p className="mt-4 text-xl text-gray-600 max-w-2xl mx-auto">
             Access high-quality recorded lessons and study at your own pace with our comprehensive subject bundles.
-          </motion.p>
-        </motion.div>
+          </p>
+        </div>
 
         {/* Search and Filters */}
-        <motion.div 
-          className="bg-white rounded-lg shadow-md p-6 mb-8"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.5 }}
-        >
+        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div className="md:col-span-2">
               <label htmlFor="search" className="block text-sm font-medium text-gray-700 mb-1">Search</label>
@@ -418,49 +403,33 @@ export default function RecordingsPage() {
                 className="px-4 py-2 border border-gray-300 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-indigo-500"
               >
                 <option value="all">All Levels</option>
-                <option value="Beginner">Beginner</option>
-                <option value="Intermediate">Intermediate</option>
-                <option value="Advanced">Advanced</option>
+                <option value="beginner">Beginner</option>
+                <option value="intermediate">Intermediate</option>
+                <option value="advanced">Advanced</option>
               </select>
             </div>
           </div>
           
-          <div className="mt-4 flex flex-wrap gap-2">
-            <label className="text-sm font-medium text-gray-700 w-full mb-1">Sort By:</label>
-            <motion.button 
-              className={`px-3 py-1 text-sm rounded-md ${sortBy === 'popularity' ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-700'}`}
-              onClick={() => setSortBy('popularity')}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              Most Popular
-            </motion.button>
-            <motion.button 
-              className={`px-3 py-1 text-sm rounded-md ${sortBy === 'price-low' ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-700'}`}
-              onClick={() => setSortBy('price-low')}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              Price: Low to High
-            </motion.button>
-            <motion.button 
-              className={`px-3 py-1 text-sm rounded-md ${sortBy === 'price-high' ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-700'}`}
-              onClick={() => setSortBy('price-high')}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              Price: High to Low
-            </motion.button>
-            <motion.button 
-              className={`px-3 py-1 text-sm rounded-md ${sortBy === 'newest' ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-700'}`}
-              onClick={() => setSortBy('newest')}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              Newest
-            </motion.button>
+          <div className="mt-4 flex justify-between items-center">
+            <div className="text-sm text-gray-500">
+              {filteredBundles.length} results found
+            </div>
+            
+            <div className="flex items-center">
+              <span className="text-sm text-gray-700 mr-2">Sort by:</span>
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="text-sm border-0 focus:ring-0"
+              >
+                <option value="popularity">Popularity</option>
+                <option value="price-low">Price: Low to High</option>
+                <option value="price-high">Price: High to Low</option>
+                <option value="duration">Duration</option>
+              </select>
+            </div>
           </div>
-        </motion.div>
+        </div>
 
         {/* Recording Bundles Grid */}
         {loading ? (

@@ -200,7 +200,12 @@ export default function AdminFeeReminders() {
                   <TableCell>{getStudentName(reminder.studentId)}</TableCell>
                   <TableCell>{getTutorName(reminder.tutorId)}</TableCell>
                   <TableCell>${(reminder.amount !== undefined ? reminder.amount : 0).toFixed(2)}</TableCell>
-                  <TableCell>{format(parseISO(reminder.dueDate), 'PP')}</TableCell>
+                  <TableCell>
+                    {reminder.dueDate 
+                      ? format(parseISO(reminder.dueDate), 'PP')
+                      : 'No due date'
+                    }
+                  </TableCell>
                   <TableCell>
                     <Chip 
                       label={reminder.resolved ? "Resolved" : "Pending"} 

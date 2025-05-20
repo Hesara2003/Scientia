@@ -86,35 +86,22 @@ export default function TutorsPage() {
       }
     }
   };
+
   return (
     <div className="py-12 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div 
-          className="text-center mb-12"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
+        <div className="text-center mb-12">
           <h1 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
             Meet Our Expert Tutors
           </h1>
-          <motion.p 
-            className="mt-4 text-xl text-gray-600 max-w-2xl mx-auto"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.5 }}
-          >
+          <p className="mt-4 text-xl text-gray-600 max-w-2xl mx-auto">
             Learn from experienced educators passionate about helping students succeed.
-          </motion.p>
-        </motion.div>
+          </p>
+        </div>
 
         {/* Search and Filter */}
-        <motion.div 
-          className="mb-8"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.5 }}
-        >          <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+        <div className="mb-8">
+          <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <div className="relative w-full md:w-96">
               <input
                 type="text"
@@ -135,29 +122,25 @@ export default function TutorsPage() {
             </div>
             
             <div className="flex flex-wrap gap-2">
-              <motion.button 
+              <button 
                 className={`px-4 py-2 rounded-md text-sm font-medium ${selectedSubject === 'all' ? 'bg-indigo-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
                 onClick={() => setSelectedSubject('all')}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
               >
                 All Subjects
-              </motion.button>
+              </button>
               
               {subjects.map((subject) => (
-                <motion.button 
+                <button 
                   key={subject.id}
                   className={`px-4 py-2 rounded-md text-sm font-medium ${selectedSubject === subject.name ? 'bg-indigo-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
                   onClick={() => setSelectedSubject(subject.name)}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
                 >
                   {subject.name}
-                </motion.button>
+                </button>
               ))}
             </div>
           </div>
-        </motion.div>
+        </div>
 
         {/* Tutors Grid */}
         {loading ? (

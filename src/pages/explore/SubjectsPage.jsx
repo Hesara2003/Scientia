@@ -13,7 +13,6 @@ export default function SubjectsPage() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('all');
-  
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -128,35 +127,22 @@ export default function SubjectsPage() {
       }
     }
   };
+
   return (
     <div className="py-12 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div 
-          className="text-center mb-12"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
+        <div className="text-center mb-12">
           <h1 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
             Explore Our Subjects
           </h1>
-          <motion.p 
-            className="mt-4 text-xl text-gray-600 max-w-2xl mx-auto"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.5 }}
-          >
+          <p className="mt-4 text-xl text-gray-600 max-w-2xl mx-auto">
             Discover a wide range of subjects taught by expert tutors. Find the perfect learning path for your educational journey.
-          </motion.p>
-        </motion.div>
+          </p>
+        </div>
 
         {/* Search and Filter */}
-        <motion.div 
-          className="mb-8"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.5 }}
-        >          <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+        <div className="mb-8">
+          <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <div className="relative w-full md:w-96">
               <input
                 type="text"
@@ -177,49 +163,39 @@ export default function SubjectsPage() {
             </div>
             
             <div className="flex space-x-2">
-              <motion.button 
+              <button 
                 className={`px-4 py-2 rounded-md text-sm font-medium ${selectedFilter === 'all' ? 'bg-indigo-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
                 onClick={() => setSelectedFilter('all')}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
               >
                 All
-              </motion.button>
-              <motion.button 
+              </button>
+              <button 
                 className={`px-4 py-2 rounded-md text-sm font-medium ${selectedFilter === 'popular' ? 'bg-indigo-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
                 onClick={() => setSelectedFilter('popular')}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
               >
                 Popular
-              </motion.button>
-              <motion.button 
+              </button>
+              <button 
                 className={`px-4 py-2 rounded-md text-sm font-medium ${selectedFilter === 'science' ? 'bg-indigo-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
                 onClick={() => setSelectedFilter('science')}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
               >
                 Sciences
-              </motion.button>
-              <motion.button 
+              </button>
+              <button 
                 className={`px-4 py-2 rounded-md text-sm font-medium ${selectedFilter === 'math' ? 'bg-indigo-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
                 onClick={() => setSelectedFilter('math')}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
               >
                 Mathematics
-              </motion.button>
-              <motion.button 
+              </button>
+              <button 
                 className={`px-4 py-2 rounded-md text-sm font-medium ${selectedFilter === 'humanities' ? 'bg-indigo-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
                 onClick={() => setSelectedFilter('humanities')}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
               >
                 Humanities
-              </motion.button>
+              </button>
             </div>
           </div>
-        </motion.div>
+        </div>
 
         {/* Subjects Grid */}
         {loading ? (

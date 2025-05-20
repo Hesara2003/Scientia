@@ -10,86 +10,43 @@ export default function AboutPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <h1 className="text-3xl font-bold text-gray-900 mb-8">About Scientia</h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-8">About EduLearn Hub</h1>
           
-          <motion.div 
-            className="bg-white rounded-lg shadow-md overflow-hidden mb-10"
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.7 }}
-          >
+          <div className="bg-white rounded-lg shadow-md overflow-hidden mb-10">
             <div className="p-8">
-              <motion.h2 
-                className="text-2xl font-semibold text-gray-800 mb-4"
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.2, duration: 0.5 }}
-              >
-                Our Mission
-              </motion.h2>
-              
-              <motion.p 
-                className="text-gray-600 mb-6"
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.4, duration: 0.6 }}
-              >
-                At Scientia, we're committed to revolutionizing education by providing an accessible, 
+              <h2 className="text-2xl font-semibold text-gray-800 mb-4">Our Mission</h2>
+              <p className="text-gray-600 mb-6">
+                At EduLearn Hub, we're committed to revolutionizing education by providing an accessible, 
                 engaging, and effective learning platform for students of all ages. Our mission is to 
                 empower learners to achieve their academic goals through personalized education, 
                 expert guidance, and innovative teaching methods.
-              </motion.p>
+              </p>
               
               <div className="grid md:grid-cols-2 gap-6 mt-8">
-                <motion.div 
-                  className="bg-blue-50 p-6 rounded-lg"
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.6, duration: 0.5 }}
-                  whileHover={{ 
-                    scale: 1.03, 
-                    boxShadow: "0px 8px 20px rgba(0,0,0,0.1)",
-                    transition: { duration: 0.3 }
-                  }}
-                >
+                <div className="bg-blue-50 p-6 rounded-lg">
                   <h3 className="text-xl font-semibold text-blue-700 mb-3">Quality Education</h3>
                   <p className="text-gray-600">
                     We partner with experienced educators and subject matter experts to deliver 
                     high-quality educational content across a wide range of subjects.
                   </p>
-                </motion.div>
+                </div>
                 
-                <motion.div 
-                  className="bg-indigo-50 p-6 rounded-lg"
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.8, duration: 0.5 }}
-                  whileHover={{ 
-                    scale: 1.03, 
-                    boxShadow: "0px 8px 20px rgba(0,0,0,0.1)",
-                    transition: { duration: 0.3 }
-                  }}
-                >
+                <div className="bg-indigo-50 p-6 rounded-lg">
                   <h3 className="text-xl font-semibold text-indigo-700 mb-3">Personalized Learning</h3>
                   <p className="text-gray-600">
                     Our platform adapts to individual learning styles and paces, ensuring each 
                     student receives the support they need to succeed.
                   </p>
-                </motion.div>
+                </div>
               </div>
             </div>
-          </motion.div>
+          </div>
           
           <div className="bg-white rounded-lg shadow-md overflow-hidden mb-10">
             <div className="p-8">
               <h2 className="text-2xl font-semibold text-gray-800 mb-4">Our Story</h2>
               <p className="text-gray-600 mb-4">
-                Founded in 2020, Scientia began with a simple idea: to create a bridge between 
+                Founded in 2020, EduLearn Hub began with a simple idea: to create a bridge between 
                 talented educators and students seeking quality education. What started as a small 
                 tutoring service has grown into a comprehensive educational platform serving 
                 thousands of students worldwide.

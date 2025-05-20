@@ -64,6 +64,23 @@ export const deleteTute = async (tuteId) => {
 };
 
 /**
+ * Update an existing tute
+ * Connects to: PUT /tutor/tutes/{id}
+ * @param {string|number} tuteId - ID of the tute to update
+ * @param {Object} tuteData - Updated tute data
+ * @returns {Promise<Object>} Updated tute object
+ */
+export const updateTute = async (tuteId, tuteData) => {
+  try {
+    const response = await api.put(`/tutor/tutes/${tuteId}`, tuteData);
+    return response.data;
+  } catch (error) {
+    console.error('Error updating tute:', error.response?.data || error.message);
+    throw error;
+  }
+};
+
+/**
  * Get tutes by tutor ID
  * This is a client-side filtering since the API doesn't directly support this
  * @param {string|number} tutorId - ID of the tutor
@@ -121,6 +138,7 @@ export default {
   getAllTutes,
   getTuteById,
   deleteTute,
+  updateTute,
   getTutesByTutorId,
   getTutesBySubjectId,
   getTutesByIds

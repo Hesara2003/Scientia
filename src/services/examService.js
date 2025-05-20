@@ -49,3 +49,33 @@ export const deleteExam = async (id) => {
     throw error;
   }
 };
+
+/**
+ * Get exams by class ID
+ * @param {number} classId - The class ID
+ * @returns {Promise<Array>} - List of exams for the class
+ */
+export const getExamsByClassId = async (classId) => {
+  try {
+    const response = await api.get(`/exams/class/${classId}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching exams for class ID ${classId}:`, error);
+    throw error;
+  }
+};
+
+/**
+ * Get exams by tutor ID
+ * @param {number} tutorId - The tutor ID
+ * @returns {Promise<Array>} - List of exams assigned to the tutor
+ */
+export const getExamsByTutorId = async (tutorId) => {
+  try {
+    const response = await api.get(`/exams/tutor/${tutorId}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching exams for tutor ID ${tutorId}:`, error);
+    throw error;
+  }
+};

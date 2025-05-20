@@ -207,34 +207,44 @@ export default function FeeReminders() {
         
         // Determine student name with multiple fallbacks
         let studentName = "Unknown Student";
-        if (studentId && studentId > 0) {
-          if (studentLookup[studentId]) {
-            const student = studentLookup[studentId];
-            const firstName = student.firstName || '';
-            const lastName = student.lastName || '';
+        // Handle reminders with missing student info
+        if (!studentId || studentId <= 0) {
+          // First try to get name from embedded student object
+          if (reminder.student) {
+            const firstName = reminder.student.firstName || '';
+            const lastName = reminder.student.lastName || '';
             
             if (firstName || lastName) {
               studentName = `${firstName} ${lastName}`.trim();
-            } else {
-              studentName = `Student #${studentId}`;
             }
-          } else {
-            studentName = `Student #${studentId}`;
           }
-        } else if (reminder.student) {
-          // Extract from embedded student object if available
-          const firstName = reminder.student.firstName || '';
-          const lastName = reminder.student.lastName || '';
+          
+          // If we have an ID but it's not in our lookup, use a generic name
+          if (reminder.id) {
+            studentName = `Reminder #${reminder.id}`;
+          }
+        } else if (studentLookup[studentId]) {
+          const student = studentLookup[studentId];
+          const firstName = student.firstName || '';
+          const lastName = student.lastName || '';
           
           if (firstName || lastName) {
             studentName = `${firstName} ${lastName}`.trim();
+          } else {
+            studentName = `Student #${studentId}`;
           }
+        } else {
+          studentName = `Student #${studentId}`;
         }
+        
+        // Ensure amount is always a valid number
+        const safeAmount = reminder.amount !== undefined && reminder.amount !== null ? 
+          parseFloat(reminder.amount) : 0;
         
         return {
           id: reminder.id || reminder.reminderId,
-          studentId: studentId,
-          amount: amount,
+          studentId: studentId || null, // Allow null studentId for orphaned reminders
+          amount: safeAmount,
           dueDate: formatDateString(reminder.dueDate),
           message: reminder.message || reminder.description || "",
           resolved: Boolean(reminder.resolved),
@@ -607,79 +617,82 @@ export default function FeeReminders() {
           )}
         </Paper>
       ) : (
-        <Grid container spacing={3}>
+        <Box sx={{ display: 'grid', gridTemplateColumns: {
+          xs: '1fr', 
+          md: 'repeat(2, 1fr)', 
+          lg: 'repeat(3, 1fr)'
+        }, gap: 3 }}>
           {filteredReminders.map((reminder) => (
-            <Grid item xs={12} md={6} lg={4} key={reminder.id}>
-              <Paper 
-                sx={{ 
-                  p: 3, 
-                  border: '1px solid',
-                  borderColor: reminder.resolved ? 'success.light' : 
-                    new Date(reminder.dueDate) < new Date() ? 'error.light' : 'warning.light',
-                  opacity: reminder.resolved ? 0.8 : 1,
-                  position: 'relative',
-                  transition: 'all 0.3s ease',
-                  '&:hover': {
-                    boxShadow: 3
-                  }
-                }}
-              >
-                <Box sx={{ position: 'absolute', top: 12, right: 12 }}>
-                  {getStatusChip(reminder)}
-                </Box>
-                  <Typography variant="h6" gutterBottom>
-                  ${formatAmount(reminder.amount)} Payment Due
-                  {reminder.amount <= 0 && 
-                    <Tooltip title="Invalid amount value">
-                      <WarningIcon color="error" fontSize="small" sx={{ml: 1, verticalAlign: 'middle'}} />
-                    </Tooltip>
-                  }
-                </Typography>
-                
-                <Typography variant="body2" color="text.secondary" gutterBottom>
-                  <strong>Student:</strong> {reminder.studentName}
-                  {reminder.studentName === "Unknown Student" && 
-                    <Tooltip title="Student not found in system">
-                      <WarningIcon color="error" fontSize="small" sx={{ml: 1, verticalAlign: 'middle'}} />
-                    </Tooltip>
-                  }
-                </Typography>
-                
-                <Typography variant="body2" color="text.secondary" gutterBottom>
-                  <strong>Due Date:</strong> {reminder.dueDate ? 
-                    format(parseISO(reminder.dueDate), 'PPP') : 
-                    "No date specified"}
-                </Typography>
-                
-                <Divider sx={{ my: 1.5 }} />
-                
-                <Typography variant="body2" sx={{ mt: 2, mb: 2, minHeight: '3em', maxHeight: '4.5em', overflow: 'hidden' }}>
-                  {reminder.message || "No additional message"}
-                </Typography>
-                
-                <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
-                  <Tooltip title={reminder.resolved ? "Mark as Pending" : "Mark as Resolved"}>
-                    <IconButton 
-                      color={reminder.resolved ? "default" : "success"}
-                      onClick={() => handleToggleResolved(reminder)}
-                    >
-                      <CheckCircleIcon />
-                    </IconButton>
+            <Paper 
+              key={reminder.id}
+              sx={{ 
+                p: 3, 
+                border: '1px solid',
+                borderColor: reminder.resolved ? 'success.light' : 
+                  new Date(reminder.dueDate) < new Date() ? 'error.light' : 'warning.light',
+                opacity: reminder.resolved ? 0.8 : 1,
+                position: 'relative',
+                transition: 'all 0.3s ease',
+                '&:hover': {
+                  boxShadow: 3
+                }
+              }}
+            >
+              <Box sx={{ position: 'absolute', top: 12, right: 12 }}>
+                {getStatusChip(reminder)}
+              </Box>
+                <Typography variant="h6" gutterBottom>
+                ${formatAmount(reminder.amount)} Payment Due
+                {reminder.amount <= 0 && 
+                  <Tooltip title="Invalid amount value">
+                    <WarningIcon color="error" fontSize="small" sx={{ml: 1, verticalAlign: 'middle'}} />
                   </Tooltip>
-                  
-                  <Tooltip title="Delete Reminder">
-                    <IconButton 
-                      color="error" 
-                      onClick={() => handleDeleteClick(reminder)}
-                    >
-                      <DeleteIcon />
-                    </IconButton>
+                }
+              </Typography>
+              
+              <Typography variant="body2" color="text.secondary" gutterBottom>
+                <strong>Student:</strong> {reminder.studentName}
+                {reminder.studentName === "Unknown Student" && 
+                  <Tooltip title="Student not found in system">
+                    <WarningIcon color="error" fontSize="small" sx={{ml: 1, verticalAlign: 'middle'}} />
                   </Tooltip>
-                </Box>
-              </Paper>
-            </Grid>
+                }
+              </Typography>
+              
+              <Typography variant="body2" color="text.secondary" gutterBottom>
+                <strong>Due Date:</strong> {reminder.dueDate ? 
+                  format(parseISO(reminder.dueDate), 'PPP') : 
+                  "No date specified"}
+              </Typography>
+              
+              <Divider sx={{ my: 1.5 }} />
+              
+              <Typography variant="body2" sx={{ mt: 2, mb: 2, minHeight: '3em', maxHeight: '4.5em', overflow: 'hidden' }}>
+                {reminder.message || "No additional message"}
+              </Typography>
+              
+              <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+                <Tooltip title={reminder.resolved ? "Mark as Pending" : "Mark as Resolved"}>
+                  <IconButton 
+                    color={reminder.resolved ? "default" : "success"}
+                    onClick={() => handleToggleResolved(reminder)}
+                  >
+                    <CheckCircleIcon />
+                  </IconButton>
+                </Tooltip>
+                
+                <Tooltip title="Delete Reminder">
+                  <IconButton 
+                    color="error" 
+                    onClick={() => handleDeleteClick(reminder)}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                </Tooltip>
+              </Box>
+            </Paper>
           ))}
-        </Grid>
+        </Box>
       )}
 
       {/* Add/Edit Reminder Dialog */}
