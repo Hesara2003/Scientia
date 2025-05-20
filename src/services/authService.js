@@ -86,7 +86,7 @@ const login = async (username, password) => {
   try {
     console.log('Logging in');     
     // Make the login request with enhanced error handling
-    const response = await api.post('/auth/login', { username, password }, {
+    const response = await api.post('/api/auth/login', { username, password }, {
       // Explicitly set headers for this critical request
       headers: {
         'Content-Type': 'application/json',
@@ -164,7 +164,7 @@ const register = async (userData) => {
       userData.role = userData.role.toLowerCase();
     }
     
-    const response = await api.post('/auth/register', userData);
+    const response = await api.post('/api/auth/register', userData);
     console.log('Registration successful, response:', response.data);
     
     // Store the user role in localStorage to help with login later
@@ -242,7 +242,7 @@ export {
 // You can call this from your browser console for troubleshooting
 window.checkBackendConnection = async () => {
   try {
-    const response = await api.get('/auth/health', { 
+    const response = await api.get('/api/auth/health', { 
       timeout: 5000,
       // Skip auth header for this test
       headers: { 'Authorization': undefined }
