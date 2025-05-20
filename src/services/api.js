@@ -1,10 +1,17 @@
 import axios from 'axios';
+import apiProxyHandler from './apiProxyHandler';
+
+// Get the proxy interceptor function
+const { proxyRequestInterceptor } = apiProxyHandler;
 
 // Initialize with token if available
 const token = localStorage.getItem('token');
 
+// Define API base URL - use environment variable or fallback
+const apiBaseUrl = import.meta.env.VITE_API_URL || 'http://51.21.202.228:8080/';
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'https://51.21.202.228:8080/',
+  baseURL: apiBaseUrl,
   headers: {
     'Content-Type': 'application/json',
     ...(token ? { 'Authorization': `Bearer ${token}` } : {})
@@ -20,7 +27,10 @@ const api = axios.create({
 });
 
 // Add request interceptor for debugging and token handling
-api.interceptors.request.use(  (config) => {
+api.interceptors.request.use((config) => {
+    // First apply the proxy interceptor for mixed content handling
+    config = proxyRequestInterceptor(config);
+    
     const token = localStorage.getItem('token');
     if (token) {      // Ensure exact formatting of 'Bearer ' + token with a space
       config.headers.Authorization = `Bearer ${token}`;
