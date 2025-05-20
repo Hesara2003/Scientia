@@ -86,6 +86,11 @@ const login = async (username, password) => {
   try {
     console.log('Logging in user:', username);
     console.log('API base URL being used:', api.defaults.baseURL);
+    console.log('Full API config:', {
+      baseURL: api.defaults.baseURL,
+      headers: api.defaults.headers,
+      timeout: api.defaults.timeout
+    });
     
     // Make the login request with enhanced error handling
     const response = await api.post('/auth/login', { username, password }, {
@@ -102,7 +107,9 @@ const login = async (username, password) => {
     // Log full response for debugging
     console.log('Login response status:', response.status);
     console.log('Login response headers:', response.headers);
-    console.log('Login response received:', response.data);
+    console.log('Login response data:', response.data);
+    console.log('Response data type:', typeof response.data);
+    console.log('Response data keys:', Object.keys(response.data || {}));
     
     // Handle non-200 responses explicitly
     if (response.status !== 200) {
@@ -123,6 +130,7 @@ const login = async (username, password) => {
     // Enhanced error handling for token
     if (!token) {
       console.error('Token missing from response data:', response.data);
+      console.error('Full response object:', response);
       throw new Error('No token received from server');
     }
 

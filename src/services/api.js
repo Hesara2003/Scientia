@@ -19,8 +19,10 @@ if (isProd) {
     apiBaseUrl = import.meta.env.VITE_API_URL || 'http://51.21.202.228:8080/';
   }
 } else {
-  // For development, use the Vite dev server proxy
-  apiBaseUrl = '/api/';
+  // For development, use direct URL for testing
+  apiBaseUrl = 'http://51.21.202.228:8080/';
+  // Comment out proxy for testing
+  // apiBaseUrl = '/api/';
 }
 
 const api = axios.create({
