@@ -12,7 +12,7 @@ export default defineConfig({
     proxy: {
       // Proxy all /api requests to our backend server
       '/api': {
-        target: 'http://51.21.202.228:8080',
+        target: 'https://16.171.173.27:8080',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, '')
       }

@@ -39,7 +39,7 @@ const runAuthTests = async () => {
     const directLoginResponse = await testLoginEndpoint({
       username: 'test@example.com',  // Same test credentials
       password: 'password123',
-      url: 'http://51.21.202.228:8080'  // Direct connection
+      url: 'https://16.171.173.27:8080'  // Direct connection
     });
     
     console.log('Login response analysis (direct):', analyzeApiResponse({

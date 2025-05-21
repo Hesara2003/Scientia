@@ -11,7 +11,7 @@ Create a file named `vercel.json` in the root of your project with the following
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "http://51.21.202.228:8080/:path*"
+      "destination": "https://16.171.173.27:8080/:path*"
     }
   ],
   "headers": [

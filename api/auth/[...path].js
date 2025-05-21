@@ -3,7 +3,7 @@
 
 export default async function handler(req, res) {
   const { path } = req.query;
-  const targetUrl = `http://51.21.202.228:8080/auth/${path.join('/')}`;
+  const targetUrl = `https://16.171.173.27:8080/auth/${path.join('/')}`;
   
   // Log the request for debugging
   console.log(`Proxying auth request to: ${targetUrl}`);

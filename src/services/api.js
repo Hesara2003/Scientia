@@ -16,7 +16,7 @@ if (isProd) {
     apiBaseUrl = '/api/'; 
   } else {
     // Fallback to direct HTTP (should rarely happen in production)
-    apiBaseUrl = import.meta.env.VITE_API_URL || 'http://51.21.202.228:8080/';
+    apiBaseUrl = import.meta.env.VITE_API_URL || 'https://16.171.173.27:8080/';
   }
 } else {
   // For development, use the Vite dev server proxy
@@ -73,7 +73,7 @@ api.interceptors.response.use(
     console.log(`API Response from ${response.config.url}: Status ${response.status}`);
     return response;
   },
-  (error) => {
+  async (error) => {
     if (error.response) {
       const status = error.response.status;
       const url = error.config?.url || 'unknown endpoint';
@@ -85,14 +85,39 @@ api.interceptors.response.use(
         console.error('Current role:', localStorage.getItem('userRole'));
         
         // Don't auto-logout for login requests
-        if (!url.includes('/auth/login')) {
-          // Try refresh token logic could go here
+        if (!url.includes('/auth/login') && !url.includes('/auth/refresh')) {
+          // Get refreshToken function
+          const { refreshToken } = require('./authService');
           
-          // If login failure OR token expired, don't clear token during login attempts
-          if (!url.includes('/auth/login')) {
-            console.log('Token expired or invalid, but keeping user session active if possible');
+          // Try to refresh the token
+          try {
+            // Only attempt refresh if not already trying to refresh
+            if (!error.config.__isRefreshRequest) {
+              console.log('Attempting to refresh token');
+              const newTokenData = await refreshToken();
+              
+              if (newTokenData) {
+                console.log('Token refreshed successfully, retrying failed request');
+                
+                // Retry the original request with the new token
+                const originalRequest = {...error.config};
+                originalRequest.headers['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
+                originalRequest.__isRefreshRequest = true;
+                
+                return axios(originalRequest);
+              } else {
+                console.log('Token refresh failed');
+              }
+            }
+          } catch (refreshError) {
+            console.error('Error refreshing token:', refreshError);
           }
-        }      } else if (status === 403) {
+          
+          // If refresh failed or we're already in a refresh attempt, 
+          // continue with normal error handling
+          console.log('Token expired or invalid, but keeping user session active if possible');
+        }
+      } else if (status === 403) {
         console.error(`Authorization error (403) from ${url}. User might not have required permissions.`);
         
         // Try to recover from 403 by refreshing token and adding explicit admin role

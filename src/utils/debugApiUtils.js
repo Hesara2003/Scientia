@@ -63,7 +63,7 @@ export const testApiProxy = async () => {
 
   // Test direct access to the API
   try {
-    const response = await axios.get('http://51.21.202.228:8080/health', { 
+    const response = await axios.get('https://16.171.173.27:8080/health', { 
       timeout: 5000,
       validateStatus: () => true
     });
